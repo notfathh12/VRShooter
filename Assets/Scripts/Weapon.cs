@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -27,31 +27,35 @@ public class Weapon : MonoBehaviour
 
     private void SetupInteractableWeaponEvents()
     {
-        interactableWeapon.onSelectEnter.AddListener(PickUpWeapon);
-        interactableWeapon.onSelectExit.AddListener(DropWeapon);
-        interactableWeapon.onActivate.AddListener(StartShooting);
-        interactableWeapon.onDeactivate.AddListener(StopShooting);
+        interactableWeapon.selectEntered.AddListener(PickUpWeapon);
+        interactableWeapon.selectExited.AddListener(DropWeapon);
+        interactableWeapon.activated.AddListener(StartShooting);
+        interactableWeapon.deactivated.AddListener(OnDeactivate);
     }
 
-    private void PickUpWeapon(XRBaseInteractor interactor)
+    private void PickUpWeapon(SelectEnterEventArgs args)
     {
-        interactor.GetComponent<MeshHidder>().Hide();
-    }
- 
-    private void DropWeapon(XRBaseInteractor interactor)
-    {
-        interactor.GetComponent<MeshHidder>().Show();
-
+        args.interactorObject.transform.GetComponent<MeshHidder>().Hide();
     }
 
-    protected virtual void StartShooting(XRBaseInteractor interactor)
+    private void DropWeapon(SelectExitEventArgs args)
     {
-
+        args.interactorObject.transform.GetComponent<MeshHidder>().Show();
     }
 
-    protected virtual void StopShooting(XRBaseInteractor interactor)
+    protected virtual void StartShooting(ActivateEventArgs args)
     {
+        // Implementation your method
+    }
 
+    protected virtual void OnDeactivate(DeactivateEventArgs args)
+    {
+        StopShooting(args.interactorObject);
+    }
+
+    protected virtual void StopShooting(IXRInteractor interactor)
+    {
+        // Implementation your method
     }
 
     protected virtual void Shoot()
